@@ -15,25 +15,49 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # Include all .cpp and .h files in the src directory
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.h")
 
+# ImGui source files
+set(IMGUI_DIR vendor/imgui)
+set(IMGUI_SOURCES
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+    ${IMGUI_DIR}/imgui_demo.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_sdl2.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+)
+
 # Add the executable
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES} ${IMGUI_SOURCES})
+
+# Include directories
+target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_DIR} ${IMGUI_DIR}/backends)
+
+# Find SDL2
+find_package(SDL2 REQUIRED)
+if(SDL2_FOUND)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARIES})
+else()
+    message(FATAL_ERROR "SDL2 not found. Please install it and try again.")
+endif()
+
+# Link OpenGL (required for ImGui OpenGL backend)
+find_package(OpenGL REQUIRED)
+if(OPENGL_FOUND)
+    target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL::GL)
+else()
+    message(FATAL_ERROR "OpenGL not found. Please install it and try again.")
+endif()
 
 # Platform-specific settings
 if(WIN32)
     message(STATUS "Configuring for Windows")
-    # Add Windows-specific flags here if needed
 elseif(UNIX)
     message(STATUS "Configuring for Linux/Unix")
-    # Add Linux-specific flags here if needed
 endif()
-
-# Add custom include directories (if any)
-# include_directories(include)
 
 # Compiler flags (optional customization)
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
 endif()
-
-# Add additional libraries or dependencies here if needed
-# target_link_libraries(${PROJECT_NAME} some_library)
