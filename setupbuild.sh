@@ -1,9 +1,8 @@
 #/bin/sh
 
-cd vendor
-git clone https://github.com/ocornut/imgui.git
+git submodule init
+git submodule update
 
-cd ..
 mkdir build
 cd build
 cmake ../

@@ -23,24 +23,23 @@ set(IMGUI_SOURCES
     ${IMGUI_DIR}/imgui_widgets.cpp
     ${IMGUI_DIR}/imgui_tables.cpp
     ${IMGUI_DIR}/imgui_demo.cpp
-    ${IMGUI_DIR}/backends/imgui_impl_sdl2.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
     ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
 )
+
+# SDL3 setup
+add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
+set(SDL3_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/SDL/include")
+set(SDL3_LIBRARIES SDL3::SDL3) # Link against SDL3 target
 
 # Add the executable
 add_executable(${PROJECT_NAME} ${SOURCES} ${IMGUI_SOURCES})
 
 # Include directories
-target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_DIR} ${IMGUI_DIR}/backends)
+target_include_directories(${PROJECT_NAME} PRIVATE ${SDL3_INCLUDE_DIRS} ${IMGUI_DIR} ${IMGUI_DIR}/backends)
 
-# Find SDL2
-find_package(SDL2 REQUIRED)
-if(SDL2_FOUND)
-    target_include_directories(${PROJECT_NAME} PRIVATE ${SDL2_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARIES})
-else()
-    message(FATAL_ERROR "SDL2 not found. Please install it and try again.")
-endif()
+# Link SDL3
+target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL3_LIBRARIES})
 
 # Link OpenGL (required for ImGui OpenGL backend)
 find_package(OpenGL REQUIRED)
