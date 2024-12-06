@@ -1,0 +1,21 @@
+#ifndef INSTUCTORWINDOW_H
+#define INSTUCTORWINDOW_H
+
+#include <QMainWindow>
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class InstuctorWindow; }
+QT_END_NAMESPACE
+
+class InstuctorWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    InstuctorWindow(QWidget *parent = nullptr);
+    ~InstuctorWindow();
+
+private:
+    Ui::InstuctorWindow *ui;
+};
+#endif // INSTUCTORWINDOW_H
