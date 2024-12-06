@@ -1,7 +1,7 @@
 @echo off
 
-cd vendor
-git clone https://github.com/ocornut/imgui.git
+git submodule init
+git submodule update
 
 mkdir build
 cd build

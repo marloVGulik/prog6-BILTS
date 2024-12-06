@@ -1,4 +1,3 @@
-This project is a project from 5 students for PROG6 
-
-in this project we attempt to make a baby monnitoring simulation
+# Babies I'd Like To Save
+A virtual baby health monitoring solution made by 5 students as a programming assignment.
 
