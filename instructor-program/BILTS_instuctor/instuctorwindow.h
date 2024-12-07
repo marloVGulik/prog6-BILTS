@@ -15,6 +15,10 @@ public:
     InstuctorWindow(QWidget *parent = nullptr);
     ~InstuctorWindow();
 
+private slots:
+    void on_actionExit_triggered();
+    void on_actionHart_triggered();
+
 private:
     Ui::InstuctorWindow *ui;
 };
