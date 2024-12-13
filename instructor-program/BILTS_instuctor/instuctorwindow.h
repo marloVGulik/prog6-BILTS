@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include <windows.h>
 #include <iostream>
+#include <QLabel>
+#include <QPixmap>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class InstuctorWindow; }
@@ -28,7 +31,7 @@ private slots:
     void on_actiontempratuur_triggered();
 
     void on_actionSPO2_triggered();
-
+    void createBackgroundLabel();
 private:
     Ui::InstuctorWindow *ui;
 };

@@ -6,6 +6,7 @@ InstuctorWindow::InstuctorWindow(QWidget *parent)
     , ui(new Ui::InstuctorWindow)
 {
     ui->setupUi(this);
+    createBackgroundLabel(); // creates background picture heartpage
 }
 
 InstuctorWindow::~InstuctorWindow()
@@ -49,3 +50,30 @@ void InstuctorWindow::on_actionSPO2_triggered()
     ui->pages->setCurrentWidget(ui->SPO2_Page);
 }
 
+// create hartpage sine
+void InstuctorWindow::createBackgroundLabel() {
+    // Get the page from the stacked widget
+    QWidget* hartwindow = ui->pages->findChild<QWidget*>("HartPage");
+    if (!hartwindow) {
+        qWarning("Hartwindow page not found in the stacked widget.");
+        return;
+    }
+
+    // Create the label and set it as a child of the hartwindow
+    QLabel* backgroundLabel = new QLabel(hartwindow);
+
+    // Load the background image
+    QPixmap pixmap("../BILTS_instuctor/Heartsine.png");
+
+    // Set the pixmap and scale it to fit the page size
+    backgroundLabel->setPixmap(pixmap.scaled(hartwindow->size(), Qt::KeepAspectRatioByExpanding));
+    backgroundLabel->setScaledContents(true); // Optional: Ensures the image scales with the label
+
+    // Resize the label to cover the entire hartwindow
+    backgroundLabel->resize(350, 350);
+
+    // Center the label in the hartwindow
+    int x = (hartwindow->width() - backgroundLabel->width()) / 2;
+    int y = (hartwindow->height() - backgroundLabel->height()) / 2;
+    backgroundLabel->move(x, y);
+}
