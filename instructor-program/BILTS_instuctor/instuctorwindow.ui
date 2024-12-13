@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>InstuctorWindow</class>
+ <widget class="QMainWindow" name="InstuctorWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>839</width>
+    <height>580</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Instrucor monitor</string>
+  </property>
+  <widget class="QWidget" name="generalwidget">
+   <widget class="QStackedWidget" name="pages">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>0</y>
+      <width>781</width>
+      <height>551</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>3</number>
+    </property>
+    <widget class="QWidget" name="SettingsPage"/>
+    <widget class="QWidget" name="BD_page"/>
+    <widget class="QWidget" name="SPO2_Page"/>
+    <widget class="QWidget" name="TempPage">
+     <widget class="QPushButton" name="pushButton">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>230</y>
+        <width>83</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>test_mqtt</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="HartPage">
+     <property name="styleSheet">
+      <string notr="true">background-image: url(&quot;../BILTS_instuctor/Heartsine.png&quot;);
+background-repeat: no-repeat;
+background-position: center;</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>839</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuInstructor_Window">
+    <property name="title">
+     <string>Menu</string>
+    </property>
+    <widget class="QMenu" name="menuSettings">
+     <property name="title">
+      <string>Settings</string>
+     </property>
+     <addaction name="actionIP_Configuration"/>
+    </widget>
+    <addaction name="menuSettings"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuValues">
+    <property name="title">
+     <string>Values</string>
+    </property>
+    <addaction name="actionHart"/>
+    <addaction name="actionBloed_druk"/>
+    <addaction name="actiontempratuur"/>
+    <addaction name="actionSPO2"/>
+   </widget>
+   <addaction name="menuInstructor_Window"/>
+   <addaction name="menuValues"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset theme="battery"/>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionIP_Configuration">
+   <property name="icon">
+    <iconset theme="emblem-system"/>
+   </property>
+   <property name="text">
+    <string>IP Configuration</string>
+   </property>
+  </action>
+  <action name="actionHart">
+   <property name="icon">
+    <iconset theme="battery-low"/>
+   </property>
+   <property name="text">
+    <string>Hart</string>
+   </property>
+  </action>
+  <action name="actionBloed_druk">
+   <property name="text">
+    <string>Bloed druk</string>
+   </property>
+  </action>
+  <action name="actiontempratuur">
+   <property name="text">
+    <string>Tempratuur</string>
+   </property>
+  </action>
+  <action name="actionSPO2">
+   <property name="text">
+    <string>SPO2</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
