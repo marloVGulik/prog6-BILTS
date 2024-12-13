@@ -4,6 +4,7 @@ SDL_Window*		RenderingEngine::_window;
 SDL_GLContext	RenderingEngine::_glContext;
 ImGuiIO*		RenderingEngine::_io;
 bool			RenderingEngine::_windowOpen;
+ImVec4			RenderingEngine::_backgroundColor;
 
 void RenderingEngine::setup() {
 	RenderingEngine::setupWindow();
@@ -28,6 +29,22 @@ void RenderingEngine::preRender() {
 		SDL_Delay(10);
 		continue;
 	} */
+	// Clear the screen
+    ImVec4 clear_color = RenderingEngine::_backgroundColor;
+	glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
+
+    // Enable blending for transparency
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Set up 2D orthographic projection
+	glViewport(0, 0, (int)RenderingEngine::_io->DisplaySize.x, (int)RenderingEngine::_io->DisplaySize.y);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, (int)RenderingEngine::_io->DisplaySize.x, (int)RenderingEngine::_io->DisplaySize.y, 0, -1, 1); // Match your window dimensions
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
 	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL3_NewFrame();
@@ -35,13 +52,13 @@ void RenderingEngine::preRender() {
 	ImGui::NewFrame();
 }
 void RenderingEngine::render() {
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 	// Rendering
 	ImGui::Render();
-	glViewport(0, 0, (int)RenderingEngine::_io->DisplaySize.x, (int)RenderingEngine::_io->DisplaySize.y);
-	glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-	glClear(GL_COLOR_BUFFER_BIT);
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	// Flush OpenGL commands
+    glFlush();
+
 	SDL_GL_SwapWindow(RenderingEngine::_window);
 }
 void RenderingEngine::setupWindow() {
@@ -88,7 +105,7 @@ void RenderingEngine::setupWindow() {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-    Uint32 window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN;
+    Uint32 window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_MAXIMIZED;
 	std::cout << "Making window" << std::endl;
     RenderingEngine::_window = SDL_CreateWindow("Dear ImGui SDL3+OpenGL3 example", 1280, 720, window_flags);
     if (RenderingEngine::_window == nullptr)
@@ -97,6 +114,8 @@ void RenderingEngine::setupWindow() {
         //return -1;
     }
     RenderingEngine::_windowOpen = true;
+	RenderingEngine::_backgroundColor = ImVec4(0.0, 0.0f, 0.0f, 1.0f);
+
     std::cout << "Made windows successfully" << std::endl;
     SDL_SetWindowPosition(RenderingEngine::_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     RenderingEngine::_glContext = SDL_GL_CreateContext(RenderingEngine::_window);
@@ -138,3 +157,29 @@ void RenderingEngine::stopImGui() {
 SDL_Window* RenderingEngine::getWindow() { return RenderingEngine::_window; }
 ImGuiIO* RenderingEngine::getIO() { return RenderingEngine::_io; }
 bool RenderingEngine::isRunning() { return RenderingEngine::_windowOpen; }
+
+ImVec4& RenderingEngine::getBackgroundColor() { return RenderingEngine::_backgroundColor; }
+void RenderingEngine::setBackgroundColor(ImVec4 newbg) { RenderingEngine::_backgroundColor = newbg; }
+
+void RenderingEngine::debugBound(ImVec4 box) {
+	glLineWidth(1);
+	glDisable(GL_TEXTURE_2D);
+	glPushAttrib(GL_ENABLE_BIT);
+	glColor3f(1.0f, 0.0f, 0.0f);
+	glBegin(GL_LINES);
+	glVertex2f(box.x, box.y);
+	glVertex2f(box.x + box.z, box.y);
+
+	glVertex2f(box.x + box.z, box.y);
+	glVertex2f(box.x + box.z, box.y + box.w);
+
+	glVertex2f(box.x + box.z, box.y + box.w);
+	glVertex2f(box.x, box.y + box.w);
+
+	glVertex2f(box.x, box.y + box.w);
+	glVertex2f(box.x, box.y);
+
+	glVertex2f(box.x, box.y);
+	glVertex2f(box.x + box.z, box.y + box.w);
+	glEnd();
+}

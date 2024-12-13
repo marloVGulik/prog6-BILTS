@@ -1,22 +1,17 @@
-// Dear ImGui: standalone example application for SDL2 + OpenGL
-// (SDL is a cross-platform general purpose library for handling windows, inputs, OpenGL/Vulkan/Metal graphics context creation, etc.)
-
-// Learn about Dear ImGui:
-// - FAQ                  https://dearimgui.com/faq
-// - Getting Started      https://dearimgui.com/getting-started
-// - Documentation        https://dearimgui.com/docs (same as your local docs/ folder).
-// - Introduction, links and more at the top of imgui.cpp
-
 #include "imgui.h"
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_opengl3.h"
 
-#include "RenderingEngine.h"
+#define RENDER_DEBUG
 
-// This example can also compile and run with Emscripten! See 'Makefile.emscripten' for details.
-#ifdef __EMSCRIPTEN__
-#include "../libs/emscripten/emscripten_mainloop_stub.h"
-#endif
+#include "RenderingEngine.h"
+#include "MonitorWidget.h"
+
+#include <chrono>
+uint64_t timeSinceEpochMillisec() {
+  using namespace std::chrono;
+  return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+}
 
 // Main code
 int main(int, char**)
@@ -28,18 +23,57 @@ int main(int, char**)
     // Our state
     bool show_demo_window = true;
     bool show_another_window = false;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+    ImVec4& clear_color = RenderingEngine::getBackgroundColor();
 
+	uint64_t previousTime = timeSinceEpochMillisec();
 
+	// Setup MonitorWidgets
+	MonitorWidget w1 = MonitorWidget(
+		ImVec4(100, 100, 2000, 200), // Graph position
+		ImVec4(2100, 100, 200, 200), // Info position
+		ImVec4(0.0f, 1.0f, 0.0f, 0.0f), // Graph color
+		"Pulse",
+		100.0,
+		0.0,
+		2,
+		20,
+		3000.0
+	);
+	MonitorWidget w2 = MonitorWidget(
+		ImVec4(100, 300, 2000, 200), // Graph position
+		ImVec4(2100, 300, 200, 200), // Info position
+		ImVec4(0.0f, 1.0f, 1.0f, 0.0f), // Graph color
+		"SVP",
+		100.0,
+		0.0,
+		2,
+		20,
+		5000.0
+	);
+	MonitorWidget w3 = MonitorWidget(
+		ImVec4(100, 500, 2000, 200), // Graph position
+		ImVec4(2100, 500, 200, 200), // Info position
+		ImVec4(0.0f, 0.0f, 1.0f, 0.0f), // Graph color
+		"Oxygen",
+		100.0,
+		0.0,
+		2,
+		20,
+		10000.0
+	);
 
     while (RenderingEngine::isRunning())
     {
-        // Poll and handle events (inputs, window resize, etc.)
-        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+		// Deltatime calculation
+		uint64_t currentTime = timeSinceEpochMillisec();
+		uint64_t dt = currentTime - previousTime;
+		previousTime = currentTime;
+
 		RenderingEngine::preRender();
+
+		w1.render(currentTime, dt);
+		w2.render(currentTime, dt);
+		w3.render(currentTime, dt);
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)

@@ -13,6 +13,8 @@
 #include <SDL3/SDL_opengl.h>
 #endif
 
+#define RENDER_DEBUG
+
 class RenderingEngine {
 public:
 	static void setup();
@@ -31,12 +33,18 @@ public:
 	static ImGuiIO* getIO();
 	static bool isRunning();
 
+	static ImVec4& getBackgroundColor();
+	static void setBackgroundColor(ImVec4 newbg);
+
 	static bool _windowOpen;
+	static ImVec4 _backgroundColor;
 
 	static SDL_Window*		_window;
 	static SDL_GLContext	_glContext;
 
 	static ImGuiIO*			_io;
+
+	static void debugBound(ImVec4 box);
 };
 
 #endif
