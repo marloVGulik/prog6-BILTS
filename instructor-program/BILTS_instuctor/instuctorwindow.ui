@@ -44,7 +44,21 @@
     <widget class="QWidget" name="SettingsPage"/>
     <widget class="QWidget" name="BD_page"/>
     <widget class="QWidget" name="SPO2_Page"/>
-    <widget class="QWidget" name="TempPage"/>
+    <widget class="QWidget" name="TempPage">
+     <widget class="QPushButton" name="pushButton">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>230</y>
+        <width>83</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>test_mqtt</string>
+      </property>
+     </widget>
+    </widget>
     <widget class="QWidget" name="HartPage">
      <property name="autoFillBackground">
       <bool>false</bool>
@@ -93,8 +107,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionExit">
    <property name="icon">
-    <iconset theme="battery">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="battery"/>
    </property>
    <property name="text">
     <string>Exit</string>
@@ -102,8 +115,7 @@
   </action>
   <action name="actionIP_Configuration">
    <property name="icon">
-    <iconset theme="emblem-system">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="emblem-system"/>
    </property>
    <property name="text">
     <string>IP Configuration</string>
@@ -111,8 +123,7 @@
   </action>
   <action name="actionHart">
    <property name="icon">
-    <iconset theme="battery-low">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset theme="battery-low"/>
    </property>
    <property name="text">
     <string>Hart</string>

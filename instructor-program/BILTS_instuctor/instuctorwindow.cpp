@@ -7,16 +7,20 @@ InstuctorWindow::InstuctorWindow(QWidget *parent)
 {
     ui->setupUi(this);
     createBackgroundLabel(); // creates background picture heartpage
+
+    // Initialize the MQTT client once with the broker address and topic
+    std::string brokerAddress = "localhost";
+    std::string topic = "test/topic";
+    mqttClient = new MqttClient(brokerAddress, topic);
 }
 
 InstuctorWindow::~InstuctorWindow()
 {
+    delete mqttClient; // Clean up the MQTT client
     delete ui;
 }
 
-
-//menu navigation
-
+// Menu navigation
 void InstuctorWindow::on_actionExit_triggered()
 {
     exit(0);
@@ -32,12 +36,10 @@ void InstuctorWindow::on_actionIP_Configuration_triggered()
     ui->pages->setCurrentWidget(ui->SettingsPage);
 }
 
-
 void InstuctorWindow::on_actionBloed_druk_triggered()
 {
     ui->pages->setCurrentWidget(ui->BD_page);
 }
-
 
 void InstuctorWindow::on_actiontempratuur_triggered()
 {
@@ -76,4 +78,15 @@ void InstuctorWindow::createBackgroundLabel() {
     int x = (hartwindow->width() - backgroundLabel->width()) / 2;
     int y = (hartwindow->height() - backgroundLabel->height()) / 2;
     backgroundLabel->move(x, y);
+void InstuctorWindow::on_pushButton_clicked()
+{
+    // Message to publish
+    std::string message = "Hello from MQTT Client!";
+
+    // Publish the message using the initialized MQTT client
+    if (mqttClient->publishMessage(message)) {
+        std::cout << "Message published successfully!" << std::endl;
+    } else {
+        std::cerr << "Failed to publish the message." << std::endl;
+    }
 }
