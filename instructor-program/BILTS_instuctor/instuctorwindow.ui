@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>801</width>
-    <height>607</height>
+    <width>839</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,23 +27,18 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>3</number>
     </property>
-    <widget class="QWidget" name="settings"/>
-    <widget class="QWidget" name="page_2">
-     <widget class="QLineEdit" name="lineEdit">
-      <property name="geometry">
-       <rect>
-        <x>280</x>
-        <y>330</y>
-        <width>113</width>
-        <height>24</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
+    <widget class="QWidget" name="SettingsPage"/>
+    <widget class="QWidget" name="BD_page"/>
+    <widget class="QWidget" name="SPO2_Page"/>
+    <widget class="QWidget" name="TempPage"/>
+    <widget class="QWidget" name="HartPage">
+     <property name="styleSheet">
+      <string notr="true">background-image: url(&quot;../BILTS_instuctor/Heartsine.png&quot;);
+background-repeat: no-repeat;
+background-position: center;</string>
+     </property>
     </widget>
    </widget>
   </widget>
@@ -52,7 +47,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>801</width>
+     <width>839</width>
      <height>21</height>
     </rect>
    </property>
@@ -85,7 +80,8 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionExit">
    <property name="icon">
-    <iconset theme="battery"/>
+    <iconset theme="battery">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Exit</string>
@@ -93,7 +89,8 @@
   </action>
   <action name="actionIP_Configuration">
    <property name="icon">
-    <iconset theme="emblem-system"/>
+    <iconset theme="emblem-system">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>IP Configuration</string>
@@ -101,7 +98,8 @@
   </action>
   <action name="actionHart">
    <property name="icon">
-    <iconset theme="battery-low"/>
+    <iconset theme="battery-low">
+     <normaloff>.</normaloff>.</iconset>
    </property>
    <property name="text">
     <string>Hart</string>

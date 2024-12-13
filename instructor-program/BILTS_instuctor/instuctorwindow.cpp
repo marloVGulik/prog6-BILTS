@@ -6,7 +6,6 @@ InstuctorWindow::InstuctorWindow(QWidget *parent)
     , ui(new Ui::InstuctorWindow)
 {
     ui->setupUi(this);
-//    hide_frames();
 }
 
 InstuctorWindow::~InstuctorWindow()
@@ -15,29 +14,38 @@ InstuctorWindow::~InstuctorWindow()
 }
 
 
+//menu navigation
+
 void InstuctorWindow::on_actionExit_triggered()
 {
     exit(0);
 }
 
-//void InstuctorWindow::hide_frames() {
-//    // List of frame pointers
-//    QFrame* frames[] = {
-//        ui->heartFrame,
-//    };
-
-//    // Number of frames in the array
-//    int frameCount = sizeof(frames) / sizeof(frames[0]);
-
-//    // Iterate over the array and hide each frame
-//    for (int i = 0; i < frameCount; ++i) {
-//        frames[i]->hide();
-//    }
-//}
-
 void InstuctorWindow::on_actionHart_triggered()
 {
-
-    // Show the heart frame
-//    ui->heartFrame->show();
+    ui->pages->setCurrentWidget(ui->HartPage);
 }
+
+void InstuctorWindow::on_actionIP_Configuration_triggered()
+{
+    ui->pages->setCurrentWidget(ui->SettingsPage);
+}
+
+
+void InstuctorWindow::on_actionBloed_druk_triggered()
+{
+    ui->pages->setCurrentWidget(ui->BD_page);
+}
+
+
+void InstuctorWindow::on_actiontempratuur_triggered()
+{
+    // Switch to the TempPage
+    ui->pages->setCurrentWidget(ui->TempPage);
+}
+
+void InstuctorWindow::on_actionSPO2_triggered()
+{
+    ui->pages->setCurrentWidget(ui->SPO2_Page);
+}
+

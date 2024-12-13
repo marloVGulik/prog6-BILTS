@@ -2,6 +2,8 @@
 #define INSTUCTORWINDOW_H
 
 #include <QMainWindow>
+#include <windows.h>
+#include <iostream>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class InstuctorWindow; }
@@ -18,6 +20,14 @@ public:
 private slots:
     void on_actionExit_triggered();
     void on_actionHart_triggered();
+
+    void on_actionIP_Configuration_triggered();
+
+    void on_actionBloed_druk_triggered();
+
+    void on_actiontempratuur_triggered();
+
+    void on_actionSPO2_triggered();
 
 private:
     Ui::InstuctorWindow *ui;
