@@ -78,6 +78,8 @@ void InstuctorWindow::createBackgroundLabel() {
     int x = (hartwindow->width() - backgroundLabel->width()) / 2;
     int y = (hartwindow->height() - backgroundLabel->height()) / 2;
     backgroundLabel->move(x, y);
+}
+
 void InstuctorWindow::on_pushButton_clicked()
 {
     // Message to publish
