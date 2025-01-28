@@ -7,11 +7,15 @@
 #include <iostream>
 #include <cstdlib>
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_pixels.h>
+#include <SDL3_ttf/SDL_ttf.h>
+#include <GL/glu.h>
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <SDL3/SDL_opengles2.h>
 #else
 #include <SDL3/SDL_opengl.h>
 #endif
+
 
 #define RENDER_DEBUG
 
@@ -25,6 +29,7 @@ public:
 
 	static void setupWindow();
 	static void setupImGui();
+	static void setupFont();
 
 	static void stopWindow();
 	static void stopImGui();
@@ -36,6 +41,8 @@ public:
 	static ImVec4& getBackgroundColor();
 	static void setBackgroundColor(ImVec4 newbg);
 
+	static void renderText(std::string message, SDL_Color color, int x, int y, TTF_Font* font);
+
 	static bool _windowOpen;
 	static ImVec4 _backgroundColor;
 
@@ -43,6 +50,8 @@ public:
 	static SDL_GLContext	_glContext;
 
 	static ImGuiIO*			_io;
+
+	static TTF_Font* 		_basefont;
 
 	static void debugBound(ImVec4 box);
 };

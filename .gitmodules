@@ -4,3 +4,9 @@
 [submodule "vendor/SDL"]
 	path = vendor/SDL
 	url = https://github.com/libsdl-org/SDL.git
+[submodule "vendor/SDL_ttf"]
+	path = vendor/SDL_ttf
+	url = https://github.com/libsdl-org/SDL_ttf.git
+[submodule "vendor/paho.mqtt.c"]
+	path = vendor/paho.mqtt.c
+	url = https://github.com/eclipse-paho/paho.mqtt.c.git
