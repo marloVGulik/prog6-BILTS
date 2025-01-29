@@ -25,6 +25,8 @@ set(IMGUI_SOURCES
     ${IMGUI_DIR}/imgui_demo.cpp
     ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
     ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+        src/MQTT.cpp
+        src/MQTT.h
 )
 
 # SDL3 setup

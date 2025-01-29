@@ -1,4 +1,3 @@
-// Mqtt_client.cpp
 #include "Mqtt_client.h"
 
 MqttClient::MqttClient(const std::string& brokerAddress, const std::string& topic)
