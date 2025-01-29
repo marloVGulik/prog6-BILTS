@@ -45,11 +45,11 @@ void MainWindow::updateWaveform(){
     // Calculate the time offset based on the PRbpm (i.e., the phase shift)
     double offsetFactor = ecgSimulator->heartrate / 60.0;  // Convert PRbpm to a fraction (0 to 1)
 
-    // Instead of changing frequency, we adjust the phase offset based on the PRbpm
+    // Instead of changing frequency, we adjust the phase offset based on the bpm
     waveformPhase += offsetFactor * 0.03;  // Adjust phase increment to shift the waveform
-    if (waveformPhase > 1.0) {
-        waveformPhase -= 1.0;  // Keep the phase within the range [0, 1]
-    }
+    // if (waveformPhase > 1.0) {
+    //     waveformPhase -= 1.0;  // Keep the phase within the range [0, 1]
+    // }
 
     // Trigger the repaint of the waveform widget
     ui->Graph->update();
@@ -71,12 +71,13 @@ void MainWindow::paintEvent(QPaintEvent *event){
     painter.setPen(pen);
 
     QPolygon wavePolygon;
-    for (int x = 0; x < width; x += 2) {
-        double t = (waveformPhase + (double)x / (width * 0.5));
+    for (int x = 0; x < width; x++) {
+        double t = (waveformPhase + (double)x / ((width * 0.5))/ 60 * ecgSimulator->heartrate / 2);
         double y = 0.0;
         y = amplitude * simulator.GenerateWave(t);
 
         wavePolygon << QPoint(x, centerY - y);
+        ui->Time->setText(QString::number(t));
     }
     painter.drawPolyline(wavePolygon);
 }
