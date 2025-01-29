@@ -33,7 +33,8 @@ MonitorWidget::~MonitorWidget() {
 }
 
 double calculateValue(uint64_t i, uint64_t div) {
-	const int divider = div;
+	// if(div == 0) std::cout << "Divider is zero!" << std::endl;
+	const int divider = (div + 1);
 	return ((double)(i % divider) / (double)divider);
 }
 
@@ -157,9 +158,11 @@ void MonitorWidget::render(time_t t, time_t dt) {
 	wf |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground;
 	_open = true;
 
-	ImGui::SetNextWindowPos(ImVec2(_infoPosition.x, _infoPosition.y));
-	ImGui::Begin("window", &_open, wf);
-	ImGui::Text("%s", _name.c_str());
+	RenderingEngine::renderText(_name.c_str(), {.r = 255, .g = 255, .b = 255 }, _infoPosition.x, _infoPosition.y, RenderingEngine::_basefont);
+
+	ImGui::SetNextWindowPos(ImVec2(_infoPosition.x, _infoPosition.y + 20));
+	ImGui::Begin(_name.c_str(), &_open, wf);
+	// ImGui::Text("%s", _name.c_str());
 	// ImGui::SetWindowFontScale(4.0f);
 	// float oldSize = ImGui::GetFont()->Scale;
 	// ImGui::GetFont()->Scale *= 4;

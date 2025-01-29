@@ -29,19 +29,47 @@ set(IMGUI_SOURCES
         src/MQTT.h
 )
 
-# SDL3 setup
-add_subdirectory(vendor/SDL EXCLUDE_FROM_ALL)
-set(SDL3_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/SDL/include")
-set(SDL3_LIBRARIES SDL3::SDL3) # Link against SDL3 target
+# Paho MQTT setup
+add_subdirectory(vendor/paho.mqtt.c EXCLUDE_FROM_ALL) # Adjust folder name if needed
+set(PAHO_MQTT_INCLUDE_DIRS "${CMAKE_SOURCE_DIR}/vendor/paho.mqtt.c/src")
+set(PAHO_MQTT_LIBRARIES paho-mqtt3c)
+
+add_subdirectory(vendor/SDL)
+add_subdirectory(vendor/SDL_ttf)
+
+add_library(vendor INTERFACE)
+target_link_libraries(vendor INTERFACE SDL3::SDL3)
+target_link_libraries(vendor INTERFACE SDL3_ttf::SDL3_ttf)
+
+
+find_package(OpenGL REQUIRED)
+find_package(GLUT REQUIRED)
+
 
 # Add the executable
 add_executable(${PROJECT_NAME} ${SOURCES} ${IMGUI_SOURCES})
 
 # Include directories
-target_include_directories(${PROJECT_NAME} PRIVATE ${SDL3_INCLUDE_DIRS} ${IMGUI_DIR} ${IMGUI_DIR}/backends)
+target_include_directories(${PROJECT_NAME} PRIVATE
+	# ${SDL3_INCLUDE_DIRS}
+	${IMGUI_DIR}
+	${IMGUI_DIR}/backends
+	# ${SDL_TTF_INCLUDE_DIRS}
+	${PAHO_MQTT_INCLUDE_DIRS}
+	${OPENGL_INCLUDE_DIRS}
+	${GLUT_INCLUDE_DIRS}
+)
 
 # Link SDL3
-target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL3_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE
+	# ${SDL3_LIBRARIES}
+	${PAHO_MQTT_LIBRARIES}
+	${OPENGL_LIBRARIES}
+	# ${SDL_TTF_LIBRARIES}
+	${GLUT_LIBRARY}
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE vendor)
 
 # Link OpenGL (required for ImGui OpenGL backend)
 find_package(OpenGL REQUIRED)

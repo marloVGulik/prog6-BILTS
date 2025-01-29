@@ -5,10 +5,12 @@ SDL_GLContext	RenderingEngine::_glContext;
 ImGuiIO*		RenderingEngine::_io;
 bool			RenderingEngine::_windowOpen;
 ImVec4			RenderingEngine::_backgroundColor;
+TTF_Font* 		RenderingEngine::_basefont;
 
 void RenderingEngine::setup() {
 	RenderingEngine::setupWindow();
 	RenderingEngine::setupImGui();
+	RenderingEngine::setupFont();
 }
 void RenderingEngine::stop() {
 	RenderingEngine::stopImGui();
@@ -142,6 +144,16 @@ void RenderingEngine::setupImGui() {
 	ImGui_ImplOpenGL3_Init(glsl_version);
 	std::cout << "Setup ImGui successfully" << std::endl;
 }
+void RenderingEngine::setupFont() {
+	std::cout << "Setting up fonts" << std::endl;
+	TTF_Init();
+	RenderingEngine::_basefont = TTF_OpenFont("ARIAL.TTF", 24);
+	if(RenderingEngine::_basefont == nullptr) {
+		std::cout << "Basefont is not found!" << std::endl;
+		exit(-1);
+	}
+}
+
 void RenderingEngine::stopWindow() {
 	SDL_GL_DestroyContext(RenderingEngine::_glContext);
 	SDL_DestroyWindow(RenderingEngine::_window);
@@ -160,6 +172,64 @@ bool RenderingEngine::isRunning() { return RenderingEngine::_windowOpen; }
 
 ImVec4& RenderingEngine::getBackgroundColor() { return RenderingEngine::_backgroundColor; }
 void RenderingEngine::setBackgroundColor(ImVec4 newbg) { RenderingEngine::_backgroundColor = newbg; }
+
+void RenderingEngine::renderText(std::string message, SDL_Color color, int x, int y, TTF_Font* font) {
+
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+  gluOrtho2D(0, RenderingEngine::_io->DisplaySize.x,0,RenderingEngine::_io->DisplaySize.y);
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_TEXTURE_2D);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  GLuint texture;
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+
+  // std::cout << message << std::endl;
+  SDL_Surface * sFont = TTF_RenderText_Blended(font, message.c_str(), 255, color);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sFont->w, sFont->h, 0, GL_BGRA,
+                GL_UNSIGNED_BYTE, sFont->pixels);
+
+  ImVec4 textSurface;
+  textSurface.x = x;
+  textSurface.y = y;
+  textSurface.z = sFont->w;
+  textSurface.w = sFont->h;
+  RenderingEngine::debugBound(textSurface);
+
+  glBegin(GL_QUADS);
+  {
+    glTexCoord2f(0,1); glVertex2f(x, y);
+    glTexCoord2f(1,1); glVertex2f(x + sFont->w, y);
+    glTexCoord2f(1,0); glVertex2f(x + sFont->w, y + sFont->h);
+    glTexCoord2f(0,0); glVertex2f(x, y + sFont->h);
+  }
+  glEnd();
+
+  glDisable(GL_BLEND);
+  glDisable(GL_TEXTURE_2D);
+  glEnable(GL_DEPTH_TEST);
+
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+  glMatrixMode(GL_PROJECTION);
+  glPopMatrix();
+
+  glDeleteTextures(1, &texture);
+  SDL_DestroySurface(sFont);
+}
+
 
 void RenderingEngine::debugBound(ImVec4 box) {
 	glLineWidth(1);
