@@ -30,6 +30,8 @@ set(IMGUI_SOURCES
     ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
         src/sp02.cpp
         src/sp02.h
+        src/NIBP.cpp
+        src/NIBP.h
 )
 
 # SDL3 setup
