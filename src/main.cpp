@@ -1,8 +1,14 @@
 #include "imgui.h"
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_opengl3.h"
+#include "MQTTClient.h"
 
 #define RENDER_DEBUG
+
+#define MQTT_SERVER "192.168.137.133"
+#define MQTT_PORT 1883
+#define MQTT_CLIENT_ID "HeartRateMonitorClient"
+#define MQTT_TOPIC "BILTS_broker"
 
 #include "RenderingEngine.h"
 #include "MonitorWidget.h"
@@ -10,22 +16,150 @@
 #include "sp02.h"
 
 #include <chrono>
+#include <thread>
+#include <mutex>
+#include <queue>
+#include <iostream>
+#include <sstream>
+#include <string>
+
+std::queue<std::string> messageQueue;
+std::mutex queueMutex;
+bool running = true;
+
+MQTTClient client;
+MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
+
+enum State {
+	NSR,         // Normal Sinus Rhythm
+	Tachycardia, // Fast heart rate
+	Bradycardia  // Slow heart rate
+};
+
+int BPM = 145;   // Beats Per Minute
+int BrPM = 45;  // Breaths per Minute
+int CT = 36;    // Core Temperature
+int ST = 38;    // Surface Temperature
+int NIBP = 65;  // Non-invasive Blood Pressure
+int SpO2 = 100;  // Blood Oxygenation
+
+// Array of states
+State currentState = NSR;
+
 uint64_t timeSinceEpochMillisec() {
   using namespace std::chrono;
   return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }
 
-// class TestTask : public BGTask {
-// public:
-// 	TestTask() { std::cout << "Test task" << std::endl; }
-//
-// private:
-// }
+void processMessage(const std::string& message) {
+	std::istringstream iss(message);
+	std::string key;
+	std::string valueStr;
+	int value = 0;
+
+	// Split message into key and value
+	size_t delimiterPos = message.find(": ");
+	if (delimiterPos != std::string::npos) {
+		key = message.substr(0, delimiterPos);
+		valueStr = message.substr(delimiterPos + 2);
+		value = std::stoi(valueStr); // Convert value string to integer
+	} else {
+		key = message;
+	}
+
+	if (key == "heartrate") {
+		BPM = value;
+		currentState = NSR;
+	}
+	else if (key.find("heartrate/") == 0) {
+		std::string stateStr = key.substr(10); // Extract state from "heartrate/STATE"
+		BPM = value;
+
+		if (stateStr == "NSR") {
+			currentState = NSR;
+		} else if (stateStr == "tachycardia") {
+			currentState = Tachycardia;
+		} else if (stateStr == "bradycardia") {
+			currentState = Bradycardia;
+		}
+	}
+	else if (key == "NIBP") {
+		NIBP = value;
+	}
+	else if (key == "SpO2") {
+		SpO2 = value;
+	}
+	else if (key == "breathing") {
+		BrPM = value;
+	}
+	else if (key == "temperature/core") {
+		CT = value;
+	}
+	else if (key == "temperature/surface") {
+		ST = value;
+	}
+
+	// Print for debugging
+	std::cout << "Updated values -> BPM: " << BPM
+			  << ", NIBP: " << NIBP
+			  << ", SpO2: " << SpO2
+			  << ", BrPM: " << BrPM
+			  << ", CT: " << CT
+			  << ", ST: " << ST
+			  << ", State: " << currentState << std::endl;
+}
+
+void mqttPollingThread() {
+	while (running) {
+		MQTTClient_message* message = NULL;
+		char* topic = NULL;
+		int topicLen = 0;
+
+		int rc = MQTTClient_receive(client, &topic, &topicLen, &message, 100); // Wait 100ms (10Hz polling)
+		if (rc == MQTTCLIENT_SUCCESS && message != NULL) {
+			std::string payload(static_cast<char*>(message->payload), message->payloadlen);
+
+			std::lock_guard<std::mutex> lock(queueMutex);
+			messageQueue.push(payload);
+
+			MQTTClient_freeMessage(&message);
+			MQTTClient_free(topic);
+		}
+	}
+}
 
 // Main code
 int main(int, char**)
 {
 	RenderingEngine::setup();
+
+	int rc = MQTTClient_create(&client, MQTT_SERVER, MQTT_CLIENT_ID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
+	if (rc != MQTTCLIENT_SUCCESS) {
+		std::cerr << "Failed to create MQTT client. Error code: " << rc << std::endl;
+		return -1;
+	}
+
+	conn_opts.keepAliveInterval = 20;
+	conn_opts.cleansession = 1;
+
+
+	// Connect to the MQTT broker
+	rc = MQTTClient_connect(client, &conn_opts);
+	if (rc != MQTTCLIENT_SUCCESS) {
+		std::cerr << "Failed to connect to MQTT broker. Error code: " << rc << std::endl;
+		return -1;
+	}
+	std::cout << "Connected to MQTT broker at " << MQTT_SERVER << ":" << MQTT_PORT << std::endl;
+
+	// Subscribe to the 'BILTS' topic
+	rc = MQTTClient_subscribe(client, MQTT_TOPIC, 0);
+	if (rc != MQTTCLIENT_SUCCESS) {
+		std::cerr << "Failed to subscribe to topic. Error code: " << rc << std::endl;
+		return -1;
+	}
+	std::cout << "Subscribed to topic: " << MQTT_TOPIC << std::endl;
+
+	std::thread mqttThread(mqttPollingThread);
 
 	ImGuiIO* io = RenderingEngine::getIO();
 
@@ -79,6 +213,18 @@ int main(int, char**)
 		previousTime = currentTime;
 
 		RenderingEngine::preRender();
+
+    	std::string latestMessage;
+	    {
+			std::lock_guard<std::mutex> lock(queueMutex);
+			if (!messageQueue.empty()) {
+				latestMessage = messageQueue.front();
+				messageQueue.pop();
+				std::cout << "Processed message: " << latestMessage << std::endl;
+
+				processMessage(latestMessage); // Call function to store values
+			}
+	    }
 
 		w1.render(currentTime, dt);
 		w2.render(currentTime, dt);
@@ -139,9 +285,15 @@ int main(int, char**)
 
         RenderingEngine::render();
     }
+	// Disconnect and clean up MQTT client
+	MQTTClient_disconnect(client, 10000);
+	MQTTClient_destroy(&client);
+	std::cout << "MQTT client disconnected and destroyed." << std::endl;
+
+	running = false;
+	mqttThread.join(); // Wait for thread to finish
 
     RenderingEngine::stop();
-
 
     return 0;
 }

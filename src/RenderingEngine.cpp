@@ -244,7 +244,6 @@ void RenderingEngine::renderText(std::string message, SDL_Color color, int x, in
 	SDL_DestroySurface(sFont);
 	SDL_DestroySurface(sFontBase);
 
-	RenderingEngine::debugBound(textSurface);
 }
 
 
