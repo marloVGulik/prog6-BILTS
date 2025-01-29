@@ -205,6 +205,13 @@ int main(int, char**)
 		10000.0
 	);
 
+	setSpO2Value(SpO2);
+	setPrbpmValue(BPM);
+	updateWaveform();
+	for(int i = 0; i < 2000; i++) {
+		w3.setValue(i, calculateWaveform(i, 1000) / 200 + 0.5);
+	}
+
     while (RenderingEngine::isRunning())
     {
 		// Deltatime calculation
@@ -223,6 +230,15 @@ int main(int, char**)
 				std::cout << "Processed message: " << latestMessage << std::endl;
 
 				processMessage(latestMessage); // Call function to store values
+
+				setSpO2Value(SpO2);
+				setPrbpmValue(BPM);
+				updateWaveform();
+				for(int i = 0; i < 2000; i++) {
+					w3.setValue(i, calculateWaveform(i, 1000) / 200 + 0.5);
+				}
+
+
 			}
 	    }
 
@@ -240,10 +256,6 @@ int main(int, char**)
   //
 		// }
 		// if(w3.needsUpdate()) {
-		// 	updateWaveform();
-		// 	for(int i = 0; i < 2000; i++) {
-		// 		w3.setValue(i, calculateWaveform(i, 1000) / 200 + 0.5);
-		// 	}
 		// }
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).

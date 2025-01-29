@@ -112,6 +112,9 @@ void MonitorWidget::render(time_t t, time_t dt) {
 
 	size_t newestDrawnPoint = floor(((deadzoneStart + deadzoneEnd) / 2 - _graphPosition.x) / graphWidthInPixels * _values.size());
 	size_t calculatedDrawnAmount = newestDrawnPoint - _lastDrawnValuePos;
+	if(calculatedDrawnAmount > 100000) calculatedDrawnAmount = newestDrawnPoint;
+	std::cout << calculatedDrawnAmount << std::endl;
+	std::cout << _lastDrawnValuePos << std::endl;
 
 	if(newestDrawnPoint < _lastDrawnValuePos) {
 		_needsUpdate = true;
@@ -136,7 +139,7 @@ void MonitorWidget::render(time_t t, time_t dt) {
 		_values[pos] = _updateValues[pos];
 		// std::cout << _values[pos] << std::endl;
 	}
-	// _lastDrawnValuePos = newestDrawnPoint;
+	_lastDrawnValuePos = newestDrawnPoint;
 
     for (size_t i = 1; i < _values.size(); ++i) {
         // Map points to screen coordinates
