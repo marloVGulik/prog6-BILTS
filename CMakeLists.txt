@@ -28,6 +28,8 @@ set(IMGUI_SOURCES
     ${IMGUI_DIR}/imgui_demo.cpp
     ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
     ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+        src/sp02.cpp
+        src/sp02.h
 )
 
 # SDL3 setup
