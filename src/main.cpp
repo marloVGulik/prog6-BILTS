@@ -13,6 +13,13 @@ uint64_t timeSinceEpochMillisec() {
   return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }
 
+// class TestTask : public BGTask {
+// public:
+// 	TestTask() { std::cout << "Test task" << std::endl; }
+//
+// private:
+// }
+
 // Main code
 int main(int, char**)
 {

@@ -48,6 +48,7 @@ public:
 
 	static SDL_Window*		_window;
 	static SDL_GLContext	_glContext;
+	static SDL_Renderer* 	_SDLrenderer;
 
 	static ImGuiIO*			_io;
 

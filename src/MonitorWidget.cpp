@@ -68,6 +68,7 @@ void MonitorWidget::render(time_t t, time_t dt) {
     int graphWidthInPixels = static_cast<int>(_graphPosition.z); // Assuming z is the width
     if (graphWidthInPixels <= 0) return;
 
+
     double timeOffset = static_cast<double>(t % static_cast<time_t>(_lengthInSeconds));
     double pixelOffset = (timeOffset / _lengthInSeconds) * graphWidthInPixels;
 
@@ -105,6 +106,7 @@ void MonitorWidget::render(time_t t, time_t dt) {
 		// std::cout << calculatedDrawnAmount << std::endl;
 		int rndVal = rand() % 1000;
 		int rndBase = rand() % _updateValues.size();
+		_recentRand = rndBase;
 		// int rndBase = 4294967295;
 		for (int i = 0; i < _updateValues.size(); i++) {
 			double v = calculateValue(rndBase + i, rndVal);
@@ -156,21 +158,26 @@ void MonitorWidget::render(time_t t, time_t dt) {
 	// Imgui part
 	ImGuiWindowFlags wf = 0;
 	wf |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBackground;
+	// wf |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 	_open = true;
 
-	RenderingEngine::renderText(_name.c_str(), {.r = 255, .g = 255, .b = 255 }, _infoPosition.x, _infoPosition.y, RenderingEngine::_basefont);
+	ImGui::SetNextWindowPos(ImVec2(_infoPosition.x, _infoPosition.y));
 
-	ImGui::SetNextWindowPos(ImVec2(_infoPosition.x, _infoPosition.y + 20));
 	ImGui::Begin(_name.c_str(), &_open, wf);
+	ImGui::SetWindowSize(ImVec2(_infoPosition.z, _infoPosition.w));
 	// ImGui::Text("%s", _name.c_str());
 	// ImGui::SetWindowFontScale(4.0f);
 	// float oldSize = ImGui::GetFont()->Scale;
 	// ImGui::GetFont()->Scale *= 4;
 	// ImGui::PushFont(ImGui::GetFont());
-	ImGui::Text("BPM: %i", 50);
+	// ImGui::Text("%s: %i", _name.c_str(), _recentRand);
+	ImGui::Text("%s: %i", _name.c_str(), 500);
 	// ImGui::SetWindowFontScale(1.0f);
 	// ImGui::GetFont()->Scale = oldSize;
 	// ImGui::PopFont();
 	ImGui::End();
+
+
+	// RenderingEngine::renderText(_name.c_str(), {.r = 255, .g = 255, .b = 255, .a = 255 }, _infoPosition.x, _infoPosition.y, RenderingEngine::_basefont);
 }
 

@@ -40,6 +40,7 @@ private:
 
 	// Imgui
 	bool _open;
+	int _recentRand;
 };
 
 #endif
