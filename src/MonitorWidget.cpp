@@ -37,7 +37,13 @@ double calculateValue(uint64_t i, uint64_t div) {
 	const int divider = (div + 1);
 	return ((double)(i % divider) / (double)divider);
 }
-
+bool MonitorWidget::needsUpdate() {
+	if(_needsUpdate) {
+		_needsUpdate = false;
+		return true;
+	}
+	return false;
+}
 void MonitorWidget::changeValue(int pixelOffset, double value, bool interpolate) {
 	// std::cout << "start" << std::endl;
 	if(interpolate) {
@@ -51,7 +57,7 @@ void MonitorWidget::changeValue(int pixelOffset, double value, bool interpolate)
 			if(val != NAN) {
 				_values[_lastUpdatedValuePos + i] = val;
 			} else {
-				_values[_lastUpdatedValuePos + i] = 0.5;
+				_values[_lastUpdatedValuePos + i] = 0.5 * _top;
 			}
 			// std::cout << "Calculated " << _lastUpdatedValuePos + i << " to " << pixelOffset << " with mp " << val << std::endl;
 		}
@@ -59,6 +65,11 @@ void MonitorWidget::changeValue(int pixelOffset, double value, bool interpolate)
 		_values[pixelOffset] = value;
 	}
 	_lastUpdatedValuePos = pixelOffset;
+}
+void MonitorWidget::setValue(int t, double v) {
+	if(t < _updateValues.size()) {
+		_updateValues.at(t) = v;
+	}
 }
 
 void MonitorWidget::render(time_t t, time_t dt) {
@@ -101,24 +112,31 @@ void MonitorWidget::render(time_t t, time_t dt) {
 
 	size_t newestDrawnPoint = floor(((deadzoneStart + deadzoneEnd) / 2 - _graphPosition.x) / graphWidthInPixels * _values.size());
 	size_t calculatedDrawnAmount = newestDrawnPoint - _lastDrawnValuePos;
+
 	if(newestDrawnPoint < _lastDrawnValuePos) {
-		calculatedDrawnAmount = newestDrawnPoint + (_values.size() - _lastDrawnValuePos);
-		// std::cout << calculatedDrawnAmount << std::endl;
-		int rndVal = rand() % 1000;
-		int rndBase = rand() % _updateValues.size();
-		_recentRand = rndBase;
-		// int rndBase = 4294967295;
-		for (int i = 0; i < _updateValues.size(); i++) {
-			double v = calculateValue(rndBase + i, rndVal);
-			// std :: cout << "Calculated " << v << std::endl;
-			_updateValues[i] = v;
-		}
+		_needsUpdate = true;
 	}
+
+	// UNCOMMENT FOR RANDOM DATA
+	// if(newestDrawnPoint < _lastDrawnValuePos) {
+	// 	calculatedDrawnAmount = newestDrawnPoint + (_values.size() - _lastDrawnValuePos);
+	// 	// std::cout << calculatedDrawnAmount << std::endl;
+	// 	int rndVal = rand() % 1000;
+	// 	int rndBase = rand() % _updateValues.size();
+	// 	_recentRand = rndBase;
+	// 	// int rndBase = 4294967295;
+	// 	for (int i = 0; i < _updateValues.size(); i++) {
+	// 		double v = calculateValue(rndBase + i, rndVal);
+	// 		// std :: cout << "Calculated " << v << std::endl;
+	// 		_updateValues[i] = v;
+	// 	}
+	// }
 	for (size_t i = 0; i < calculatedDrawnAmount; i++) {
 		size_t pos = (_lastDrawnValuePos + i) % _values.size();
 		_values[pos] = _updateValues[pos];
+		// std::cout << _values[pos] << std::endl;
 	}
-	_lastDrawnValuePos = newestDrawnPoint;
+	// _lastDrawnValuePos = newestDrawnPoint;
 
     for (size_t i = 1; i < _values.size(); ++i) {
         // Map points to screen coordinates

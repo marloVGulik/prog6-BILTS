@@ -2,19 +2,20 @@
 #define BG_TASK
 
 #include <thread>
+#include <iostream>
 
 class BGTask {
 public:
 	BGTask();
 
 	bool start();
-	bool stop();
+	void stop();
 	bool join();
-	virtual void runnable();
+	virtual void runnable() {};
 private:
 	void _run();
 	bool _active;
-	thread _thread;
-}
+	std::thread _thread;
+};
 
 #endif

@@ -1,5 +1,6 @@
 #include "BGTask.h"
 
+
 BGTask::BGTask() {
 	_active = false;
 }
@@ -17,9 +18,8 @@ void BGTask::_run() {
 bool BGTask::start() {
 	if(!_active) {
 		_active = true;
-		thread th(&BGTask::_run, this);
-		_thread = th;
-		return true
+		_thread = std::thread(&BGTask::_run, this);
+		return true;
 	} else return false;
 }
 

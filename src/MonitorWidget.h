@@ -17,6 +17,9 @@ public:
 	void render(time_t t, time_t dt);
 
 	void changeValue(int timeSet, double value, bool interpolate);
+	void setValue(int t, double v);
+
+	bool needsUpdate();
 private:
 	// Base values
 	ImVec4 _graphPosition;
@@ -41,6 +44,8 @@ private:
 	// Imgui
 	bool _open;
 	int _recentRand;
+
+	bool _needsUpdate;
 };
 
 #endif

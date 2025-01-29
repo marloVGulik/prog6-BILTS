@@ -7,6 +7,8 @@
 #include "RenderingEngine.h"
 #include "MonitorWidget.h"
 
+#include "sp02.h"
+
 #include <chrono>
 uint64_t timeSinceEpochMillisec() {
   using namespace std::chrono;
@@ -39,12 +41,12 @@ int main(int, char**)
 		ImVec4(100, 100, 2000, 200), // Graph position
 		ImVec4(2100, 100, 200, 200), // Info position
 		ImVec4(0.0f, 1.0f, 0.0f, 0.0f), // Graph color
-		"Pulse",
-		100.0,
-		0.0,
-		2,
-		20,
-		3000.0
+		"Pulse", // Name
+		100.0, // Max
+		0.0, // Min
+		2, // Line width
+		20, // Deadzone size
+		3000.0 // Time in ms
 	);
 	MonitorWidget w2 = MonitorWidget(
 		ImVec4(100, 300, 2000, 200), // Graph position
@@ -63,7 +65,7 @@ int main(int, char**)
 		ImVec4(0.0f, 0.0f, 1.0f, 0.0f), // Graph color
 		"Oxygen",
 		100.0,
-		0.0,
+		-100.0,
 		2,
 		20,
 		10000.0
@@ -81,6 +83,22 @@ int main(int, char**)
 		w1.render(currentTime, dt);
 		w2.render(currentTime, dt);
 		w3.render(currentTime, dt);
+
+		// if(w1.needsUpdate()) {
+		// 	updateWaveform();
+		// 	for(int i = 0; i < 2000; i++) {
+		// 		w3.setValue(i, calculateWaveform(i, 1000) / 200 + 0.5);
+		// 	}
+		// }
+		// if(w2.needsUpdate()) {
+  //
+		// }
+		// if(w3.needsUpdate()) {
+		// 	updateWaveform();
+		// 	for(int i = 0; i < 2000; i++) {
+		// 		w3.setValue(i, calculateWaveform(i, 1000) / 200 + 0.5);
+		// 	}
+		// }
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)
