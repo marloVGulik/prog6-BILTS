@@ -198,7 +198,7 @@ void RenderingEngine::renderText(std::string message, SDL_Color color, int x, in
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sFont->w, sFont->h, 0, GL_BGRA,
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sFont->w, sFont->h, 0, GL_RGBA,
                 GL_UNSIGNED_BYTE, sFont->pixels);
 
   ImVec4 textSurface;
