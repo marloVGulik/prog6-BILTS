@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
 
+set(CMAKE_C_COMPILER "gcc")
+set(CMAKE_CXX_COMPILER "g++")
+
 # Project name and version
 project(BILTS VERSION 1.0 LANGUAGES CXX)
 
@@ -25,6 +28,10 @@ set(IMGUI_SOURCES
     ${IMGUI_DIR}/imgui_demo.cpp
     ${IMGUI_DIR}/backends/imgui_impl_sdl3.cpp
     ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+        src/sp02.cpp
+        src/sp02.h
+        src/NIBP.cpp
+        src/NIBP.h
 )
 
 # Paho MQTT setup
