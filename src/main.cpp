@@ -6,6 +6,7 @@
 
 #include "RenderingEngine.h"
 #include "MonitorWidget.h"
+#include "serial.h"
 
 #include <chrono>
 uint64_t timeSinceEpochMillisec() {
@@ -17,7 +18,11 @@ uint64_t timeSinceEpochMillisec() {
 int main(int, char**)
 {
 	RenderingEngine::setup();
-
+	Serial serial("/dev/ttyACM0", 9600);
+	if (!serial.isOpen()) {
+		std::cerr << "Failed to open serial port." << std::endl;
+		// return 1; for shutting down if no serial port is detected
+	}
 	ImGuiIO* io = RenderingEngine::getIO();
 
     // Our state
@@ -67,7 +72,16 @@ int main(int, char**)
 		// Deltatime calculation
 		uint64_t currentTime = timeSinceEpochMillisec();
 		uint64_t dt = currentTime - previousTime;
+    	uint64_t serialcheck = currentTime - previousTime;
 		previousTime = currentTime;
+
+    	if (serialcheck >= 500) {
+    		serialcheck = 0;
+    		std::string data = serial.serialPoll();
+    		if (!data.empty()) {
+    			std::cout << "Received: " << data << std::endl;
+    		}
+    	}
 
 		RenderingEngine::preRender();
 
