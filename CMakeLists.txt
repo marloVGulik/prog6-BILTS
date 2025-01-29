@@ -32,6 +32,8 @@ set(IMGUI_SOURCES
         src/sp02.h
         src/NIBP.cpp
         src/NIBP.h
+        src/Resipartion.cpp
+        src/Resipartion.h
 )
 
 # SDL3 setup
